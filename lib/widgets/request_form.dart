@@ -1,4 +1,6 @@
+import 'package:api_client/state/request_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/request_model.dart';
 import '../services/http_service.dart';
 
@@ -19,7 +21,7 @@ class _RequestFormState extends State<RequestForm> {
         child: Column(
           children: [
             TextFormField(
-              decoration: InputDecoration(labelText: 'URL'),
+              decoration: const InputDecoration(labelText: 'URL'),
               onSaved: (value) => _url = value ?? '',
             ),
             DropdownButtonFormField<String>(
@@ -33,7 +35,7 @@ class _RequestFormState extends State<RequestForm> {
               onChanged: (value) => setState(() => _method = value!),
             ),
             ElevatedButton(
-                onPressed: _sendRequest, child: Text('Send Request')),
+                onPressed: _sendRequest, child: const Text('Send Request')),
           ],
         ));
   }
@@ -43,13 +45,12 @@ class _RequestFormState extends State<RequestForm> {
       _formKey.currentState!.save();
       final request = RequestModel(url: _url, method: _method);
       _httpService.sendRequest(request).then((response) {
-        // Handle the repsonse
-        print('Response: ${response.body}');
-        print('Response body length: ${response.body.length}');
-        print('Response status: ${response.statusCode}');
+        context.read<RequestState>().setResponse(response);
       }).catchError((error) {
         // Handle the error
         print('Error: $error');
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $error')));
       });
     }
   }

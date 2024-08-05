@@ -1,8 +1,13 @@
 import 'package:api_client/screens/main_screen.dart';
+import 'package:api_client/state/request_state.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => RequestState(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
